@@ -1,9 +1,11 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-//특수 문자 처리는 주로 문장의 끝을 알리는 ( ? ! ; .)이 문장의 끝에 있을때만 다시 문장의 끝에 가게하고 문장의 사이에 나오면 단어를 따라가게 만듬
+//일반적인 특수 문자들은 단어와 한 세트라고 생각하고 문장의 끝을 알리는 ( ? ! ; .)가 문장의 끝에 있을때만 다시 문장의 끝에 위치하게 만듬
 //	   입력: Do you know Doctor who?		출력: who Doctor know you Do?
 //	   입력: Do! you know Doctor who		출력: who Doctor know you Do!
-//	   입력: Do you know, Doctor who. 		출력: who Doctor know, you Do.
+//	   입력: Do you know Doctor, who. 		출력: who Doctor, know you Do.
 public class StringEdit {
 	public static void main(String[] args) {
 		String inputText;
@@ -52,37 +54,48 @@ public class StringEdit {
 
 		// 알파벳의 빈도를 넣을 배열 (인덱스 0~25 == 'a' ~ 'z', 대소문자 구별 X)
 		int[] alphabetArr = new int[26];
-		int count = 0;
+		int total = 0;
 
 		// 총 알파벳 수 출력
 		for (int i = 0; i < inputText.length(); i++) {
 			char alphabet = inputText.charAt(i);
-			// 아스키코드 값으로 알파벳 범위에 있는지 확인 후 alphabetArr 배열에 해당 알파벳 인덱스에 빈도 수 카운팅
+			// 아스키코드 값으로 알파벳 범위에 있는지 확인 후 alphabetArr 배열에 해당 알파벳배열 인덱스에 빈도 수 카운팅
 			if (('a' <= alphabet && alphabet <= 'z') || ('A' <= alphabet && alphabet <= 'Z')) {
 				if (alphabet <= 'Z') {
 					alphabetArr[alphabet - 'A']++;
 				} else {
 					alphabetArr[alphabet - 'a']++;
 				}
-				count++; // 총 알파벳 수 세기
+				total++; // 문장의 총 알파벳 수 세기
 			}
 		}
-		System.out.printf("전체 알파벳 수: %d\n" , count);
+		System.out.printf("전체 알파벳 수: %d\n" , total);
 
-		//알파벳 빈도가 높은 순으로 출력
-		alphabetFrequency(count, alphabetArr);
+		//Do you know Doctor who?
+		alphabetFrequency(alphabetArr, total);
 	}
 	
-	public static void alphabetFrequency(int count, int[] alphabetArr){
-		// 한개의 알파벳만으로 된 문장일 수 있으며, 내림차순으로 출력되게 최대 빈도(count) 부터 1 까지 alphabetArr
-		// 배열에서 빈도를 확인하여 출력시킴
-		for (int i = count; i > 0; i--) {
-			for (int j = 0; j < alphabetArr.length; j++) {
-				if (i == alphabetArr[j]) {
-					System.out.printf("%c: %d개\n", (j + 'a'), i);
+	public static void alphabetFrequency(int[] alphabetArr, int total){
+		//해시맵을 추가하여 Key == 빈도수(Integer), Vlue == "a~z: x개 ...." (String) 형식으로 사용  
+				Map<Integer, String> map = new HashMap<Integer, String>();
+				for(int i =0; i < alphabetArr.length; i++){
+					int frequency = alphabetArr[i];	//alphabetArr[i]에 저장되어 있는 값은 a~z까지의 빈도수
+					if(frequency > 0){
+						if(!map.containsKey(frequency)){	//아직 사용되지 않은 키값이면 해당 키값과 value를 ""로 초기화 시킨다.
+							map.put(frequency, "");
+						}
+						//같은 빈도수(키값)의 알파벳들은 (value + "알파벳: 키값\n") 으로 문자열을 확장 시킨다.
+						String value = map.get(frequency) + (char)(i+'a') +": " + frequency + "개\n";
+						map.put(frequency, value);
+					}
 				}
-			}
-		}	
+				//하나의 알파벳으로만 이루어진 문장일 수 있으니, 최대 나올수 있는 빈도수 total(사용한 알파벳의 총 갯수)에서부터 1개까지 확인 한다.
+				for(int frequency = total; frequency > 0; frequency--){
+					if(map.get(frequency) != null)
+					System.out.print(map.get(frequency));
+				}
 	}
-	
+
+
+
 }
