@@ -15,8 +15,6 @@ public class StringEdit {
 		inputText = scanner.nextLine();
 		String[] result = inputText.split(" ");
 
-		System.out.println("입력 문자열: " + inputText);
-
 		reverse(result); // 역순으로 출력
 		checkAlphabet(inputText); // 알파벳 빈도 확인 및 출력
 		scanner.close();
@@ -25,7 +23,6 @@ public class StringEdit {
 	public static void reverse(String[] result) {
 
 		result = checkLastChar(result); // 마지막 문자 확인 후 처리하는 메소드
-		System.out.print("출력 문자열: ");
 		for (int i = result.length - 1; i >= 0; i--) {
 			System.out.printf("%s ", result[i]);
 		}
@@ -70,32 +67,29 @@ public class StringEdit {
 			}
 		}
 		System.out.printf("전체 알파벳 수: %d\n" , total);
-
-		//Do you know Doctor who?
 		alphabetFrequency(alphabetArr, total);
 	}
 	
-	public static void alphabetFrequency(int[] alphabetArr, int total){
-		//해시맵을 추가하여 Key == 빈도수(Integer), Vlue == "a~z: x개 ...." (String) 형식으로 사용  
-				Map<Integer, String> map = new HashMap<Integer, String>();
-				for(int i =0; i < alphabetArr.length; i++){
-					int frequency = alphabetArr[i];	//alphabetArr[i]에 저장되어 있는 값은 a~z까지의 빈도수
-					if(frequency > 0){
-						if(!map.containsKey(frequency)){	//아직 사용되지 않은 키값이면 해당 키값과 value를 ""로 초기화 시킨다.
-							map.put(frequency, "");
-						}
-						//같은 빈도수(키값)의 알파벳들은 (value + "알파벳: 키값\n") 으로 문자열을 확장 시킨다.
-						String value = map.get(frequency) + (char)(i+'a') +": " + frequency + "개\n";
-						map.put(frequency, value);
-					}
+	public static void alphabetFrequency(int[] alphabetArr, int total) {
+		// 해시맵을 추가하여 Key == 빈도수(Integer), Value == "a~z: x개 ...." (String) 형식으로
+		// 사용
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		for (int i = 0; i < alphabetArr.length; i++) {
+			int frequency = alphabetArr[i]; // alphabetArr[i]에 저장되어 있는 값은 a~z까지의 빈도수
+			if (frequency > 0) {
+				if (!map.containsKey(frequency)) { // 아직 사용되지 않은 키값이면 해당 키값의 value값인 String을 ""로 초기화 시킨다.
+					map.put(frequency, "");
 				}
-				//하나의 알파벳으로만 이루어진 문장일 수 있으니, 최대 나올수 있는 빈도수 total(사용한 알파벳의 총 갯수)에서부터 1개까지 확인 한다.
-				for(int frequency = total; frequency > 0; frequency--){
-					if(map.get(frequency) != null)
-					System.out.print(map.get(frequency));
-				}
+				// 같은 빈도수(키값)의 알파벳들은 (value + "알파벳: 키값\n") 으로 문자열을 추가한다.
+				String value = map.get(frequency) + (char) (i + 'a') + ": " + frequency + "개\n";
+				map.put(frequency, value);
+			}
+		}
+		// 하나의 알파벳으로만 이루어진 문장일 수 있으니, 최대 나올수 있는 빈도수 total(사용한 알파벳의 총 갯수)에서부터 1개까지 확인 한다.
+		for (int frequency = total; frequency > 0; frequency--) {
+			if (map.containsKey(frequency)){
+				System.out.print(map.get(frequency));
+			}
+		}
 	}
-
-
-
 }
